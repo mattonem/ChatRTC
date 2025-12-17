@@ -18,14 +18,15 @@ Class {
 	#classInstVars : [
 		'staticComponents'
 	],
-	#category : 'ChatRTC-Core',
-	#package : 'ChatRTC',
-	#tag : 'Core'
+	#category : 'ChatRTC',
+	#package : 'ChatRTC'
 }
 
 { #category : 'accessing' }
 ChatRTC class >> appClasses [
-	^ super appClasses 
+
+	<pharoJsSkip>
+	^ super appClasses , { CChatRTC. PubNubSignalingClient  }
 ]
 
 { #category : 'accessing' }
@@ -58,13 +59,23 @@ ChatRTC class >> generateHtmlUsing: html [
 			html div
 				class: 'row justify-content-center';
 				with: [
+					self
+						addComponent:
+							(CChatRTC new signalingClient: (PubNubSignalingClient new
+										  pubKey: 'pub-c-570bf5e1-2662-46c9-812b-99d37b53c6bb';
+										  subKey: 'sub-c-c9966e74-3e54-4580-af77-af4f815a104c';
+										  yourself))
+						named: #main
+						on: html.
 					html div
+						hidden: true;
 						class: 'col-md-6';
 						with: [
 							html heading
 								level: 1;
 								class: 'text-center mb-4';
 								with: [ html text: 'Chat' ].
+
 							html div
 								class: 'card';
 								with: [
@@ -158,6 +169,18 @@ ChatRTC class >> updateHtmlRoot: root [
 ]
 
 { #category : 'as yet unclassified' }
+ChatRTC >> aNumber [
+
+	^ (1 to: 100) atRandom asString
+]
+
+{ #category : 'as yet unclassified' }
+ChatRTC >> aTestPass [
+
+	^ self aNumber , self anAnimalAdjective , self anAnimalName 
+]
+
+{ #category : 'as yet unclassified' }
 ChatRTC >> addMessage: message fromUser: user [
 
 	| conv |
@@ -166,6 +189,49 @@ ChatRTC >> addMessage: message fromUser: user [
 	conv value:
 		conv value , Character cr asString , user , ': ' , message.
 	conv scrollTop: conv scrollHeight
+]
+
+{ #category : 'as yet unclassified' }
+ChatRTC >> anAnimalAdjective [
+
+	^ #( 'Bamboozled' 'Befuddled' 'Belligerent' 'Bloated' 'Blubbery'
+	     'Bonkers' 'Booping' 'Bouncing' 'Bumbling' 'Bug-eyed' 'Cantankerous'
+	     'Chaotic' 'Cheeky' 'Chonk' 'Chubby' 'Clueless' 'Clumsy' 'Confused'
+	     'Cranky' 'Crazy' 'Cuddly' 'Curmudgeonly' 'Dainty' 'Dazed'
+	     'Deranged' 'Derpy' 'Disgruntled' 'Dizzy' 'Dozing' 'Dramatic'
+	     'Drooling' 'Eager' 'Eccentric' 'Explosive' 'Fidgety' 'Flabbergasted'
+	     'Floppy' 'Fluffy' 'Frazzled' 'Funky' 'Fuzzy' 'Gangly' 'Giggly'
+	     'Gluttonous' 'Goofy' 'Googly-eyed' 'Grumpy' 'Gummy' 'Hangry'
+	     'Haphazard' 'Hiccuping' 'Hilarious' 'Hissy' 'Hungry' 'Hyperactive'
+	     'Indignant' 'Jiggly' 'Jittery' 'Judging' 'Klutzy' 'Lazy' 'Loafing'
+	     'Lumpy' 'Manic' 'Melodramatic' 'Mischievous' 'Moody' 'Mopey'
+	     'Mumbling' 'Naughty' 'Neurotic' 'Nippy' 'Noisy' 'Oblivious'
+	     'Odd' 'Panicked' 'Peculiar' 'Perplexed' 'Plump' 'Pouty' 'Prickly'
+	     'Puffy' 'Quivering' 'Rambunctious' 'Ridiculous' 'Round' 'Sassy'
+	     'Scraggy' 'Screaming' 'Shaggy' 'Shaky' 'Silly' 'Sleepy' 'Slobbering'
+	     'Sluggish' 'Sneaky' 'Snoring' 'Snorting' 'Spastic' 'Squishy'
+	     'Stinky' 'Stubborn' 'Twitchy' 'Uncoordinated' 'Wobbly' 'Zany'
+	     'Zigzagging' 'Zonked' 'Zooming' 'Zesty' ) atRandom
+]
+
+{ #category : 'as yet unclassified' }
+ChatRTC >> anAnimalName [
+
+	^ #( 'Aardvark' 'Albatross' 'Alligator' 'Alpaca' 'Ant' 'Anteater'
+	     'Antelope' 'Ape' 'Armadillo' 'Baboon' 'Badger' 'Bat' 'Bear'
+	     'Beaver' 'Bee' 'Beetle' 'Bison' 'Boar' 'Buffalo' 'Butterfly'
+	     'Camel' 'Capybara' 'Cat' 'Caterpillar' 'Cattle' 'Chamois'
+	     'Cheetah' 'Chicken' 'Chimpanzee' 'Chinchilla' 'Clam' 'Cobra'
+	     'Cockroach' 'Cod' 'Coyote' 'Crab' 'Crane' 'Crocodile'
+	     'Crow' 'Deer' 'Dinosaur' 'Dog' 'Dolphin' 'Donkey' 'Dove' 'Dragonfly'
+	     'Duck' 'Dugong' 'Eagle' 'Echidna' 'Eel' 'Elephant' 'Elk' 'Emu'
+	     'Falcon' 'Ferret' 'Finch' 'Fish' 'Flamingo' 'Fly' 'Fox' 'Frog'
+	     'Gazelle' 'Gerbil' 'Giraffe' 'Gnat' 'Gnu' 'Goat' 'Goldfish'
+	     'Goose' 'Gorilla' 'Grasshopper' 'Grouse' 'Gull' 'Hamster'
+	     'Hare' 'Hawk' 'Hedgehog' 'Heron' 'Hippo' 'Hornet' 'Horse'
+	     'Hummingbird' 'Hyena' 'Ibex' 'Iguana' 'Impala' 'Jackal' 'Jaguar'
+	     'Jay' 'Jellyfish' 'Kangaroo' 'Koala' 'Komodo Dragon'
+	     'Lemur' 'Leopard' 'Lion' 'Llama' 'Lobster' 'Lynx' ) atRandom
 ]
 
 { #category : 'initialize-release' }
@@ -343,7 +409,9 @@ ChatRTC >> signalSend: object [
 { #category : 'initialize-release' }
 ChatRTC >> start [
 
+	self initializeComponentHolder.
 	super start.
+
 	(document getElementById: #connect)
 		addEventListener: #click
 		do: [ self connectSignalingServer ].
