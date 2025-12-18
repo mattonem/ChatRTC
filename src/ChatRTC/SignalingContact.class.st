@@ -72,3 +72,9 @@ SignalingContact >> pubRSAKey: anObject [
 	pubRSAKey := anObject.
 	announcer announce: SignalingContactIsSecured new
 ]
+
+{ #category : 'accessing' }
+SignalingContact >> send: aMessage [
+
+	self subclassResponsibility
+]

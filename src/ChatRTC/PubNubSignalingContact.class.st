@@ -68,7 +68,32 @@ PubNubSignalingContact >> encodeRSA: encoded then: aBlock [
 ]
 
 { #category : 'as yet unclassified' }
+PubNubSignalingContact >> handleAnswer: anAnswerMessage [
+
+	announcer announce: (SignalingAnswerReceived new
+			 answer: anAnswerMessage;
+			 yourself)
+]
+
+{ #category : 'as yet unclassified' }
+PubNubSignalingContact >> handleCandidate: anCandidateMessage [
+
+	announcer announce: (SignalingCandidateReceived new
+			 candidate: anCandidateMessage;
+			 yourself)
+]
+
+{ #category : 'as yet unclassified' }
+PubNubSignalingContact >> handleOffer: anOfferMessage [
+
+	announcer announce: (SignalingOfferReceived new
+			 offer: anOfferMessage;
+			 yourself)
+]
+
+{ #category : 'as yet unclassified' }
 PubNubSignalingContact >> ping [
+
 	console log: originRSAKey.
 	pubRSAKey
 		ifNil: [
@@ -76,6 +101,7 @@ PubNubSignalingContact >> ping [
 				:exportedKey |
 				| postClient |
 				postClient := XMLHttpRequest new.
+				exportedKey at: #type put: #ping.
 				postClient
 					open: 'POST'
 					url:
@@ -87,6 +113,7 @@ PubNubSignalingContact >> ping [
 		ifNotNil: [
 			(window crypto subtle exportKey: 'jwk' keys: originRSAKey) then: [
 				:exportedKey |
+				exportedKey at: #type put: #ping.
 				self
 					encodeAESnRSA: exportedKey asJsObject
 					then: [ :encryptedData :encryptedKey :iv |
@@ -108,6 +135,26 @@ PubNubSignalingContact >> ping [
 PubNubSignalingContact >> pubKey: anObject [
 
 	pubKey := anObject
+]
+
+{ #category : 'accessing' }
+PubNubSignalingContact >> send: aMessage [
+
+	self
+		encodeAESnRSA: aMessage
+		then: [ :encryptedData :encryptedKey :iv |
+			| postClient |
+			postClient := XMLHttpRequest new.
+			postClient
+				open: 'POST'
+				url:
+					'https://ps.pndsn.com/publish/' , pubKey , '/' , subKey , '/0/'
+					, address , '/0?uuid=' , originAddress.
+			postClient send: (JSON stringify: {
+						 (#data -> encryptedData).
+						 (#cyphered -> true).
+						 (#key -> encryptedKey).
+						 (#iv -> iv) } asJsObject) ]
 ]
 
 { #category : 'accessing' }

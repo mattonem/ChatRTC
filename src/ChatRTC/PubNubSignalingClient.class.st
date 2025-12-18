@@ -16,11 +16,9 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-PubNubSignalingClient >> addContact: anotherAddress [ 
+PubNubSignalingClient >> addContact: anotherAddress [
 
 	| newContact |
-	console log: anotherAddress.
-	contacts at: anotherAddress ifPresent: [ ^ self ].
 	contacts
 		at: anotherAddress
 		put: (newContact := PubNubSignalingContact new
@@ -30,8 +28,6 @@ PubNubSignalingClient >> addContact: anotherAddress [
 				               address: anotherAddress;
 				               originRSAKey: publicRSAKey;
 				               yourself).
-
-	console log: newContact.
 
 	announcer announce: (SignalingNewContact new
 			 contact: newContact;
@@ -179,30 +175,38 @@ PubNubSignalingClient >> open [
 				aMessage d cyphered
 					ifTrue: [
 						self decodeAESnRSAMessage: aMessage d then: [ :data |
-							self importPublicKey: data then: [ :importedKey |
+							(data jsHasOrInheritsProperty: #candidate)
+								ifTrue: [ (contacts at: aMessage i) handleCandidate: data ]
+								ifFalse: [
+									data type = #ping ifTrue: [
+										self importPublicKey: data then: [ :importedKey |
+											self
+												getAddressForPubKey: importedKey
+												then: [ :anotherAddress |
+													anotherAddress = aMessage i ifTrue: [
+														self addContact: anotherAddress pubRSAKey: importedKey ] ] ] ].
+									data type = #offer ifTrue: [
+										(contacts at: aMessage i) handleOffer: data ].
+									data type = #answer ifTrue: [
+										(contacts at: aMessage i) handleAnswer: data ] ] ] ]
+					ifFalse: [
+						aMessage d data type = #ping ifTrue: [
+							self importPublicKey: aMessage d data then: [ :importedKey |
 								self
 									getAddressForPubKey: importedKey
 									then: [ :anotherAddress |
 										anotherAddress = aMessage i ifTrue: [
-											self addContact: anotherAddress pubRSAKey: importedKey ] ] ] ] ]
-					ifFalse: [
-						self importPublicKey: aMessage d data then: [ :importedKey |
-							self
-								getAddressForPubKey: importedKey
-								then: [ :anotherAddress |
-									anotherAddress = aMessage i ifTrue: [
-										self addContact: anotherAddress pubRSAKey: importedKey ] ] ] ] ].
+											self addContact: anotherAddress pubRSAKey: importedKey ] ] ] ] ] ].
 			listner
 				open: 'GET'
 				url:
-					'https://ps.pndsn.com/v2/subscribe/' , subKey , '/' , address 
-					, '/0?tt=' , tt , '&uuid=' , address .
+					'https://ps.pndsn.com/v2/subscribe/' , subKey , '/' , address
+					, '/0?tt=' , tt , '&uuid=' , address.
 			listner send ].
 		listner
 			open: 'GET'
-			url:
-				'https://ps.pndsn.com/v2/subscribe/' , subKey , '/' , address 
-				, '/0?tt=0&uuid=' , address .
+			url: 'https://ps.pndsn.com/v2/subscribe/' , subKey , '/' , address
+				, '/0?tt=0&uuid=' , address.
 		listner send ]
 ]
 

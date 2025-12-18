@@ -21,6 +21,17 @@ RTCSignalingContactWidget >> addressToCall: anObject [
 ]
 
 { #category : 'accessing' }
+RTCSignalingContactWidget >> handleOffer: offer [
+
+	self
+		addComponent: (CChatConv new
+				 signalingContact: signalingContact;
+				 handleOffer: offer;
+				 yourself)
+		in: (self getElementById: #conversation)
+]
+
+{ #category : 'accessing' }
 RTCSignalingContactWidget >> ping [
 
 	signalingContact ping
@@ -90,9 +101,14 @@ RTCSignalingContactWidget >> start [
 			(self getElementById: #localStatusSecured) hidden: false.
 			(self getElementById: #localStatusUnsecured) hidden: true ]
 		for: self.
-		(self getElementById: #startChat)
+	(self getElementById: #startChat)
 		addEventListener: #click
 		block: [ self startChart ].
+
+	signalingContact announcer
+		when: SignalingOfferReceived
+		do: [ :offer | self handleOffer: offer offer ]
+		for: self
 ]
 
 { #category : 'accessing' }
@@ -101,6 +117,7 @@ RTCSignalingContactWidget >> startChart [
 	self
 		addComponent: (CChatConv new
 				 signalingContact: signalingContact;
+				 sendOffer;
 				 yourself)
 		in: (self getElementById: #conversation)
 ]
