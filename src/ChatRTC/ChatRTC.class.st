@@ -26,7 +26,7 @@ Class {
 ChatRTC class >> appClasses [
 
 	<pharoJsSkip>
-	^ super appClasses , { CChatRTC. PubNubSignalingClient  }
+	^ super appClasses , { RTCSignalingHubWidget. PubNubSignalingClient  }
 ]
 
 { #category : 'accessing' }
@@ -61,7 +61,7 @@ ChatRTC class >> generateHtmlUsing: html [
 				with: [
 					self
 						addComponent:
-							(CChatRTC new signalingClient: (PubNubSignalingClient new
+							(RTCSignalingHubWidget new signalingClient: (PubNubSignalingClient new
 										  pubKey: 'pub-c-570bf5e1-2662-46c9-812b-99d37b53c6bb';
 										  subKey: 'sub-c-c9966e74-3e54-4580-af77-af4f815a104c';
 										  yourself))

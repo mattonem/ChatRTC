@@ -1,5 +1,5 @@
 Class {
-	#name : 'CChatClient',
+	#name : 'RTCSignalingClientWidget',
 	#superclass : 'WCComponent',
 	#traits : 'InstanceComponentHolder',
 	#classTraits : 'InstanceComponentHolder classTrait',
@@ -17,78 +17,42 @@ Class {
 }
 
 { #category : 'rendering' }
-CChatClient >> ab2str: something [
-
-	<javascript: 'return String.fromCharCode.apply(null, new Uint8Array(something));'>
-	^ self error: 'should not be used'
-]
-
-{ #category : 'rendering' }
-CChatClient >> addContact: add pubRSAKey: key [
-
-	contacts at: add ifPresent: [ ^ self ].
-	self
-		addComponent: (contacts at: add put: (CChatContact new
-					  signalingContact: (PubNubSignalingContact new
-							   pubKey: signalingClient pubKey;
-							   subKey: signalingClient subKey;
-							   originAddress: address;
-							   originRSAKey: keys publicKey;
-							   pubRSAKey: key;
-							   yourself);
-					  addressToCall: add;
-					  yourself))
-		in: (self getElementById: #contacts)
-]
-
-{ #category : 'rendering' }
-CChatClient >> addContact: add pubRSAKey: key secured: aBoolean [
-
-	contacts at: add ifPresent: [ :contact |
-		contact pubRSAKey: key.
-		^ self ].
-	self
-		addComponent: (contacts at: add put: (CChatContact new
-					  signalingContact: (PubNubSignalingContact new
-							   pubKey: signalingClient pubKey;
-							   subKey: signalingClient subKey;
-							   originAddress: address;
-							   originRSAKey: keys publicKey;
-							   pubRSAKey: key;
-							   yourself);
-					  addressToCall: add;
-					  yourself))
-		in: (self getElementById: #contacts)
-]
-
-{ #category : 'rendering' }
-CChatClient >> addNewContact [
+RTCSignalingClientWidget >> addContact: aContact [
 
 	| addressToCall |
-	addressToCall := (self getElementById: #addressToCall) value
-		                 ifEmpty: [ ^ self ].
-	contacts at: addressToCall ifPresent: [ ^ self ].
+	addressToCall := aContact address.
 	self
-		addComponent: (contacts at: addressToCall put: (CChatContact new
-					  signalingContact: (PubNubSignalingContact new
-							   pubKey: signalingClient pubKey;
-							   subKey: signalingClient subKey;
-							   originAddress: address;
-							   originRSAKey: keys publicKey;
-							   yourself);
+		addComponent:
+			(contacts at: addressToCall put: (RTCSignalingContactWidget new
+					  signalingContact: aContact;
 					  addressToCall: addressToCall;
 					  yourself))
 		in: (self getElementById: #contacts)
 ]
 
 { #category : 'rendering' }
-CChatClient >> close [
+RTCSignalingClientWidget >> addNewContact [
+
+	| addressToCall |
+	addressToCall := (self getElementById: #addressToCall) value
+		                 ifEmpty: [ ^ self ].
+	self addNewContact: addressToCall
+]
+
+{ #category : 'rendering' }
+RTCSignalingClientWidget >> addNewContact: anotherAddress [
+
+	signalingClient addContact: anotherAddress
+]
+
+{ #category : 'rendering' }
+RTCSignalingClientWidget >> close [
 
 	signalingClient close
 ]
 
 { #category : 'rendering' }
-CChatClient >> download [
+RTCSignalingClientWidget >> download [
 
 	(window crypto subtle exportKey: 'jwk' keys: keys privateKey) then: [
 		:exportedKey |
@@ -109,7 +73,7 @@ CChatClient >> download [
 ]
 
 { #category : 'rendering' }
-CChatClient >> fromJson: jsonFile [
+RTCSignalingClientWidget >> fromJson: jsonFile [
 	"// --- IMPORT PRIVATE KEY (As before) ---
       const privateKey = await window.crypto.subtle.importKey(
         ""jwk"",
@@ -156,48 +120,14 @@ CChatClient >> fromJson: jsonFile [
 ]
 
 { #category : 'rendering' }
-CChatClient >> generateNewKeys [
-
-	| promKeys |
-	promKeys := crypto subtle
-		            generateKey: {
-				            (#name -> 'RSA-OAEP').
-				            (#modulusLength -> 4096).
-				            (#publicExponent -> self publicExponent).
-				            (#hash -> 'SHA-256') } asJsObject
-		            extractable: true
-		            usage: { #unwrapKey. #wrapKey } asJsObject.
-	promKeys then: [ :genKeys |
-		| promExpKey |
-		keys := genKeys.
-		signalingClient privateRSAKey: keys privateKey.
-		promExpKey := crypto subtle exportKey: 'spki' key: keys publicKey.
-		self updateAddress ]
-]
-
-{ #category : 'rendering' }
-CChatClient >> initialize [
+RTCSignalingClientWidget >> initialize [
 
 	super initialize.
 	contacts := Dictionary new
 ]
 
 { #category : 'rendering' }
-CChatClient >> open [
-
-	signalingClient openOn: address
-]
-
-{ #category : 'rendering' }
-CChatClient >> publicExponent [
-
-	<javascript: 'return new Uint8Array([1, 0, 1]);'>
-	^ self error: 'should not be used'
-	
-]
-
-{ #category : 'rendering' }
-CChatClient >> renderHtmlOn: html [
+RTCSignalingClientWidget >> renderHtmlOn: html [
 
 	html div
 		class: 'card';
@@ -248,21 +178,15 @@ CChatClient >> renderHtmlOn: html [
 ]
 
 { #category : 'rendering' }
-CChatClient >> signalMessage: aMessage [
-
-	console log: aMessage
-]
-
-{ #category : 'rendering' }
-CChatClient >> signalingClient: aClient [
+RTCSignalingClientWidget >> signalingClient: aClient [
 	signalingClient := aClient	
 ]
 
 { #category : 'rendering' }
-CChatClient >> start [
+RTCSignalingClientWidget >> start [
 
 	super start.
-	keys ifNil: [ self generateNewKeys ].
+	signalingClient generateNewKeys.
 	(self getElementById: #download)
 		addEventListener: #click
 		block: [ self download ].
@@ -271,10 +195,14 @@ CChatClient >> start [
 		block: [ self addNewContact ].
 	(self getElementById: #open)
 		addEventListener: #click
-		block: [ self open ].
+		block: [ signalingClient open ].
 	(self getElementById: #close)
 		addEventListener: #click
 		block: [ self close ].
+	signalingClient announcer
+		when: SignalingAddressUpdated
+		do: [ :e | (self getElementById: #address) value: e address ]
+		for: self.
 	signalingClient announcer
 		when: SignalingStatus
 		do: [ :event |
@@ -290,57 +218,14 @@ CChatClient >> start [
 			(self getElementById: #status) innerText: event status ]
 		for: self.
 	signalingClient announcer
-		when: SignalingUnsercuredPing
-		do: [ :m |
-			self addContact: m address pubRSAKey: m pubRSAKey secured: false ]
-		for: self.
-	signalingClient announcer
-		when: SignalingSercuredPing
-		do: [ :m |
-			self addContact: m address pubRSAKey: m pubRSAKey secured: true ]
+		when: SignalingNewContact
+		do: [ :m | self addContact: m contact ]
 		for: self
 ]
 
 { #category : 'rendering' }
-CChatClient >> store [
+RTCSignalingClientWidget >> store [
 
 	^ {  }
 		  asJsObject
-]
-
-{ #category : 'rendering' }
-CChatClient >> str2ab: string [
-
-	<javascript: 'const buf = new ArrayBuffer(str.length);
-  const bufView = new Uint8Array(buf);
-  for (let i = 0, strLen = str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;'>
-	^ self error: 'should not be used'
-]
-
-{ #category : 'rendering' }
-CChatClient >> toHex: something [
-
-	<javascript:
-	'const hashArray = Array.from(new Uint8Array(something)); // convert buffer to byte array
-    const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join(""); // convert bytes to hex string
-  return hashHex;'>
-	^ self error: 'should not be used'
-]
-
-{ #category : 'rendering' }
-CChatClient >> updateAddress [
-
-	| promExpKey |
-	promExpKey := crypto subtle exportKey: 'spki' key: keys publicKey.
-	promExpKey then: [ :exported |
-		| hashBufferProm |
-		hashBufferProm := crypto subtle digest: 'SHA-256' key: exported.
-		hashBufferProm then: [ :hashBuffer |
-			address := self toHex: hashBuffer.
-			(self getElementById: #address) value: address ] ]
 ]

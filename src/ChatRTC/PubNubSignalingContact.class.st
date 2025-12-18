@@ -68,8 +68,8 @@ PubNubSignalingContact >> encodeRSA: encoded then: aBlock [
 ]
 
 { #category : 'as yet unclassified' }
-PubNubSignalingContact >> ping: address [
-
+PubNubSignalingContact >> ping [
+	console log: originRSAKey.
 	pubRSAKey
 		ifNil: [
 			(window crypto subtle exportKey: 'jwk' keys: originRSAKey) then: [

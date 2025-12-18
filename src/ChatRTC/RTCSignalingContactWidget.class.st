@@ -1,6 +1,8 @@
 Class {
-	#name : 'CChatContact',
+	#name : 'RTCSignalingContactWidget',
 	#superclass : 'WCComponent',
+	#traits : 'InstanceComponentHolder',
+	#classTraits : 'InstanceComponentHolder classTrait',
 	#instVars : [
 		'addressToCall',
 		'signalingContact'
@@ -13,24 +15,24 @@ Class {
 }
 
 { #category : 'accessing' }
-CChatContact >> addressToCall: anObject [
+RTCSignalingContactWidget >> addressToCall: anObject [
 
 	addressToCall := anObject
 ]
 
 { #category : 'accessing' }
-CChatContact >> ping [
+RTCSignalingContactWidget >> ping [
 
-	signalingContact ping: addressToCall 
+	signalingContact ping
 ]
 
 { #category : 'accessing' }
-CChatContact >> pubRSAKey: aKey [
+RTCSignalingContactWidget >> pubRSAKey: aKey [
 	signalingContact pubRSAKey: aKey
 ]
 
 { #category : 'rendering' }
-CChatContact >> renderHtmlOn: html [
+RTCSignalingContactWidget >> renderHtmlOn: html [
 
 	html div
 		class: 'card';
@@ -55,23 +57,28 @@ CChatContact >> renderHtmlOn: html [
 				html button
 					class: 'btn btn-primary';
 					id: #ping;
-					with: 'Ping' ] ]
+					with: 'Ping'.
+				html button
+					class: 'btn btn-primary';
+					id: #startChat;
+					with: 'Start chatting' ].
+			html div id: #conversation ]
 ]
 
 { #category : 'accessing' }
-CChatContact >> signalingClient: anObject [
+RTCSignalingContactWidget >> signalingClient: anObject [
 
 	signalingContact := anObject
 ]
 
 { #category : 'accessing' }
-CChatContact >> signalingContact: anObject [
+RTCSignalingContactWidget >> signalingContact: anObject [
 
 	signalingContact := anObject
 ]
 
 { #category : 'accessing' }
-CChatContact >> start [
+RTCSignalingContactWidget >> start [
 
 	super start.
 	(self getElementById: #ping)
@@ -82,5 +89,18 @@ CChatContact >> start [
 		do: [
 			(self getElementById: #localStatusSecured) hidden: false.
 			(self getElementById: #localStatusUnsecured) hidden: true ]
-		for: self
+		for: self.
+		(self getElementById: #startChat)
+		addEventListener: #click
+		block: [ self startChart ].
+]
+
+{ #category : 'accessing' }
+RTCSignalingContactWidget >> startChart [
+
+	self
+		addComponent: (CChatConv new
+				 signalingContact: signalingContact;
+				 yourself)
+		in: (self getElementById: #conversation)
 ]

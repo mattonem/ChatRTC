@@ -5,11 +5,24 @@ Class {
 		'announcer',
 		'pubRSAKey',
 		'originAddress',
-		'originRSAKey'
+		'originRSAKey',
+		'address'
 	],
 	#category : 'ChatRTC',
 	#package : 'ChatRTC'
 }
+
+{ #category : 'accessing' }
+SignalingContact >> address [
+
+	^ address
+]
+
+{ #category : 'accessing' }
+SignalingContact >> address: anObject [
+
+	address := anObject
+]
 
 { #category : 'as yet unclassified' }
 SignalingContact >> announcer [
@@ -36,7 +49,7 @@ SignalingContact >> originRSAKey: anObject [
 ]
 
 { #category : 'as yet unclassified' }
-SignalingContact >> ping: address [
+SignalingContact >> ping [
 	self subclassResponsibility 
 ]
 

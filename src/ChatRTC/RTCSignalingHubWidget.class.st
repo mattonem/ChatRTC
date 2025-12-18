@@ -1,5 +1,5 @@
 Class {
-	#name : 'CChatRTC',
+	#name : 'RTCSignalingHubWidget',
 	#superclass : 'WCComponent',
 	#traits : 'InstanceComponentHolder',
 	#classTraits : 'InstanceComponentHolder classTrait',
@@ -14,14 +14,14 @@ Class {
 }
 
 { #category : 'rendering' }
-CChatRTC >> initialize [
+RTCSignalingHubWidget >> initialize [
 
 	super initialize.
 	
 ]
 
 { #category : 'rendering' }
-CChatRTC >> readClientFromFile: file [
+RTCSignalingHubWidget >> readClientFromFile: file [
 
 	| reader |
 	reader := FileReader new.
@@ -30,14 +30,14 @@ CChatRTC >> readClientFromFile: file [
 		jsonClient := JSON parse: e target result.
 
 		self
-			addComponent: (CChatClient new fromJson: jsonClient)
+			addComponent: (RTCSignalingClientWidget new fromJson: jsonClient)
 			in: (self getElementById: #clients).
 		console log: jsonClient ].
 	reader readAsText: file
 ]
 
 { #category : 'rendering' }
-CChatRTC >> renderHtmlOn: html [
+RTCSignalingHubWidget >> renderHtmlOn: html [
 
 	html div
 		class: 'container mt-5';
@@ -64,12 +64,12 @@ CChatRTC >> renderHtmlOn: html [
 ]
 
 { #category : 'rendering' }
-CChatRTC >> signalingClient: aClient [
+RTCSignalingHubWidget >> signalingClient: aClient [
 	signalingClient := aClient	
 ]
 
 { #category : 'rendering' }
-CChatRTC >> start [
+RTCSignalingHubWidget >> start [
 
 	self initializeComponentHolder.
 	super start.
@@ -80,7 +80,7 @@ CChatRTC >> start [
 		addEventListener: #click
 		block: [ :event |
 			self
-				addComponent: (CChatClient new
+				addComponent: (RTCSignalingClientWidget new
 						 signalingClient: signalingClient copy;
 						 yourself)
 				in: (self getElementById: #clients) ].

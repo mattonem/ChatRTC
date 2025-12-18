@@ -16,6 +16,55 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
+PubNubSignalingClient >> addContact: anotherAddress [ 
+
+	| newContact |
+	console log: anotherAddress.
+	contacts at: anotherAddress ifPresent: [ ^ self ].
+	contacts
+		at: anotherAddress
+		put: (newContact := PubNubSignalingContact new
+				               pubKey: pubKey;
+				               subKey: subKey;
+				               originAddress: address;
+				               address: anotherAddress;
+				               originRSAKey: publicRSAKey;
+				               yourself).
+
+	console log: newContact.
+
+	announcer announce: (SignalingNewContact new
+			 contact: newContact;
+			 yourself)
+]
+
+{ #category : 'as yet unclassified' }
+PubNubSignalingClient >> addContact: anotherAddress pubRSAKey: key [
+
+	| newContact |
+	console log: anotherAddress.
+	contacts at: anotherAddress ifPresent: [ :aContact |
+		aContact pubRSAKey: key.
+		^ self ].
+	contacts
+		at: anotherAddress
+		put: (newContact := PubNubSignalingContact new
+				               pubKey: pubKey;
+				               subKey: subKey;
+				               originAddress: address;
+				               address: anotherAddress;
+				               originRSAKey: publicRSAKey;
+				               pubRSAKey: key;
+				               yourself).
+
+	console log: newContact.
+
+	announcer announce: (SignalingNewContact new
+			 contact: newContact;
+			 yourself)
+]
+
+{ #category : 'as yet unclassified' }
 PubNubSignalingClient >> base64ToArrayBuffer: base64 [
 
 	<javascript: 'const binaryString = window.atob(base64);
@@ -62,6 +111,31 @@ PubNubSignalingClient >> decodeAESnRSAMessage: message then: aBlock [
 			aBlock value: (JSON parse: decodedString) ] ]
 ]
 
+{ #category : 'as yet unclassified' }
+PubNubSignalingClient >> generateNewKeys [
+
+	| promKeys |
+	promKeys := crypto subtle
+		            generateKey: {
+				            (#name -> 'RSA-OAEP').
+				            (#modulusLength -> 4096).
+				            (#publicExponent -> self publicExponent).
+				            (#hash -> 'SHA-256') } asJsObject
+		            extractable: true
+		            usage: { #unwrapKey. #wrapKey } asJsObject.
+	promKeys then: [ :genKeys |
+		privateRSAKey := genKeys privateKey.
+		publicRSAKey := genKeys publicKey.
+
+		(crypto subtle exportKey: 'spki' key: publicRSAKey) then: [
+			:exported |
+			| hashBufferProm |
+			hashBufferProm := crypto subtle digest: 'SHA-256' key: exported.
+			hashBufferProm then: [ :hashBuffer |
+				address := self toHex: hashBuffer.
+				announcer announce: (SignalingAddressUpdated new address: address) ] ] ]
+]
+
 { #category : 'accessing' }
 PubNubSignalingClient >> getAddressForPubKey: aKey then: aBlock [
 
@@ -90,7 +164,7 @@ PubNubSignalingClient >> importPublicKey: jwk then: aBlock [
 ]
 
 { #category : 'as yet unclassified' }
-PubNubSignalingClient >> openOn: anAddress [
+PubNubSignalingClient >> open [
 
 	| tt |
 	listner ifNil: [
@@ -110,31 +184,25 @@ PubNubSignalingClient >> openOn: anAddress [
 									getAddressForPubKey: importedKey
 									then: [ :anotherAddress |
 										anotherAddress = aMessage i ifTrue: [
-											announcer announce: (SignalingSercuredPing new
-													 address: anotherAddress;
-													 pubRSAKey: importedKey;
-													 yourself) ] ] ] ] ]
+											self addContact: anotherAddress pubRSAKey: importedKey ] ] ] ] ]
 					ifFalse: [
 						self importPublicKey: aMessage d data then: [ :importedKey |
 							self
 								getAddressForPubKey: importedKey
 								then: [ :anotherAddress |
 									anotherAddress = aMessage i ifTrue: [
-										announcer announce: (SignalingUnsercuredPing new
-												 address: anotherAddress;
-												 pubRSAKey: importedKey;
-												 yourself) ] ] ] ] ].
+										self addContact: anotherAddress pubRSAKey: importedKey ] ] ] ] ].
 			listner
 				open: 'GET'
 				url:
-					'https://ps.pndsn.com/v2/subscribe/' , subKey , '/' , anAddress
-					, '/0?tt=' , tt , '&uuid=' , anAddress.
+					'https://ps.pndsn.com/v2/subscribe/' , subKey , '/' , address 
+					, '/0?tt=' , tt , '&uuid=' , address .
 			listner send ].
 		listner
 			open: 'GET'
 			url:
-				'https://ps.pndsn.com/v2/subscribe/' , subKey , '/' , anAddress
-				, '/0?tt=0&uuid=' , anAddress.
+				'https://ps.pndsn.com/v2/subscribe/' , subKey , '/' , address 
+				, '/0?tt=0&uuid=' , address .
 		listner send ]
 ]
 
@@ -155,6 +223,14 @@ PubNubSignalingClient >> pubKey [
 PubNubSignalingClient >> pubKey: anObject [
 
 	pubKey := anObject
+]
+
+{ #category : 'as yet unclassified' }
+PubNubSignalingClient >> publicExponent [
+
+	<javascript: 'return new Uint8Array([1, 0, 1]);'>
+	^ self error: 'should not be used'
+	
 ]
 
 { #category : 'accessing' }

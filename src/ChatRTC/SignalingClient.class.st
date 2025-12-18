@@ -3,7 +3,10 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'announcer',
-		'privateRSAKey'
+		'privateRSAKey',
+		'contacts',
+		'address',
+		'publicRSAKey'
 	],
 	#category : 'ChatRTC',
 	#package : 'ChatRTC'
@@ -22,9 +25,16 @@ SignalingClient >> close [
 ]
 
 { #category : 'as yet unclassified' }
+SignalingClient >> contacts [
+
+	^ contacts
+]
+
+{ #category : 'as yet unclassified' }
 SignalingClient >> initialize [
 
-	announcer := Announcer new
+	announcer := Announcer new.
+	contacts := Dictionary new.
 ]
 
 { #category : 'as yet unclassified' }
@@ -38,8 +48,8 @@ SignalingClient >> isOpen [
 	announcer announce: SignalingStatus open
 ]
 
-{ #category : 'as yet unclassified' }
-SignalingClient >> openOn: anAddress [
+{ #category : 'instance creation' }
+SignalingClient >> open [
 
 	self subclassResponsibility
 ]
@@ -48,7 +58,8 @@ SignalingClient >> openOn: anAddress [
 SignalingClient >> postCopy [
 
 	super postCopy.
-	announcer := Announcer new
+	announcer := Announcer new.
+	contacts := Dictionary new.
 ]
 
 { #category : 'as yet unclassified' }
