@@ -146,6 +146,7 @@ RTCSignalingClientWidget >> signalingClient: aClient [
 { #category : 'rendering' }
 RTCSignalingClientWidget >> start [
 
+	self initializeComponentHolder.
 	super start.
 	signalingClient generateNewKeys.
 

@@ -66,3 +66,8 @@ SignalingClient >> postCopy [
 SignalingClient >> privateRSAKey: anObject [
 	privateRSAKey := anObject
 ]
+
+{ #category : 'as yet unclassified' }
+SignalingClient >> verifiedContacts [
+	^ contacts values select: [ :aContact | aContact isVerified  ]
+]

@@ -4,7 +4,8 @@ Class {
 	#traits : 'InstanceComponentHolder',
 	#classTraits : 'InstanceComponentHolder classTrait',
 	#instVars : [
-		'signalingClient'
+		'signalingClient',
+		'clients'
 	],
 	#pools : [
 		'RTCGlobals'
@@ -14,10 +15,15 @@ Class {
 }
 
 { #category : 'rendering' }
+RTCSignalingHubWidget >> clients [
+	^ clients
+]
+
+{ #category : 'rendering' }
 RTCSignalingHubWidget >> initialize [
 
 	super initialize.
-	
+	clients := OrderedCollection new
 ]
 
 { #category : 'rendering' }
@@ -78,15 +84,25 @@ RTCSignalingHubWidget >> start [
 
 	(self getElementById: #newClient)
 		addEventListener: #click
-		block: [ :event |
+		block: [ :event | |newClient|
 			self
 				addComponent: (RTCSignalingClientWidget new
-						 signalingClient: signalingClient copy;
+						 signalingClient: (newClient := signalingClient copy);
 						 yourself)
-				in: (self getElementById: #clients) ].
+				in: (self getElementById: #clients).
+				clients add: newClient ].
 	(self getElementById: #uploadClient)
 		addEventListener: #change
 		block: [ :event |
 			event target files ifNotEmpty: [ :files |
 				self readClientFromFile: (files at: 0) ] ]
+]
+
+{ #category : 'rendering' }
+RTCSignalingHubWidget >> verifiedContacts [
+
+	| coll |
+	coll := OrderedCollection new.
+	clients do: [ :aClient | coll addAll: aClient verifiedContacts ].
+	^ coll
 ]

@@ -38,7 +38,6 @@ PubNubSignalingClient >> addContact: anotherAddress [
 PubNubSignalingClient >> addContact: anotherAddress pubRSAKey: key [
 
 	| newContact |
-	console log: anotherAddress.
 	contacts at: anotherAddress ifPresent: [ :aContact |
 		aContact pubRSAKey: key.
 		^ self ].
@@ -74,7 +73,6 @@ PubNubSignalingClient >> base64ToArrayBuffer: base64 [
 
 { #category : 'as yet unclassified' }
 PubNubSignalingClient >> close [ 
-	console log: 'close 2'.
 	listner ifNotNil: [ listner abort ].
 	listner := nil.
 

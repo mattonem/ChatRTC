@@ -110,6 +110,7 @@ RTCSignalingContactWidget >> signalingContact: anObject [
 { #category : 'accessing' }
 RTCSignalingContactWidget >> start [
 
+	self initializeComponentHolder.
 	super start.
 	(self getElementById: #ping)
 		addEventListener: #click

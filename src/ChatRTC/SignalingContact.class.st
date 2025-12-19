@@ -51,6 +51,12 @@ SignalingContact >> isOpen [
 	^ open
 ]
 
+{ #category : 'accessing' }
+SignalingContact >> isVerified [
+
+	^ pubRSAKey isNotNil
+]
+
 { #category : 'as yet unclassified' }
 SignalingContact >> open [
 
