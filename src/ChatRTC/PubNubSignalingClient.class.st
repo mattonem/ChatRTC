@@ -28,7 +28,7 @@ PubNubSignalingClient >> addContact: anotherAddress [
 				               address: anotherAddress;
 				               originRSAKey: publicRSAKey;
 				               yourself).
-
+	newContact ping.
 	announcer announce: (SignalingNewContact new
 			 contact: newContact;
 			 yourself)
@@ -53,7 +53,7 @@ PubNubSignalingClient >> addContact: anotherAddress pubRSAKey: key [
 				               pubRSAKey: key;
 				               yourself).
 
-	console log: newContact.
+	newContact ping.
 
 	announcer announce: (SignalingNewContact new
 			 contact: newContact;
@@ -74,10 +74,12 @@ PubNubSignalingClient >> base64ToArrayBuffer: base64 [
 
 { #category : 'as yet unclassified' }
 PubNubSignalingClient >> close [ 
-
+	console log: 'close 2'.
 	listner ifNotNil: [ listner abort ].
 	listner := nil.
-	self isClosed.
+
+	announcer announce: SignalingStatus closed
+	
 ]
 
 { #category : 'as yet unclassified' }
@@ -160,6 +162,12 @@ PubNubSignalingClient >> importPublicKey: jwk then: aBlock [
 ]
 
 { #category : 'as yet unclassified' }
+PubNubSignalingClient >> isOpen [
+
+	^ listner isNotNil
+]
+
+{ #category : 'as yet unclassified' }
 PubNubSignalingClient >> open [
 
 	| tt |
@@ -170,7 +178,6 @@ PubNubSignalingClient >> open [
 			resp := JSON parse: aClient currentTarget responseText.
 			tt := resp t t.
 			messages := resp m.
-			self isOpen.
 			messages do: [ :aMessage |
 				aMessage d cyphered
 					ifTrue: [
@@ -197,6 +204,8 @@ PubNubSignalingClient >> open [
 									then: [ :anotherAddress |
 										anotherAddress = aMessage i ifTrue: [
 											self addContact: anotherAddress pubRSAKey: importedKey ] ] ] ] ] ].
+
+			announcer announce: SignalingStatus open.
 			listner
 				open: 'GET'
 				url:

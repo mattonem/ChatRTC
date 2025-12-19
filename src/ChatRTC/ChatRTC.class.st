@@ -98,16 +98,5 @@ ChatRTC class >> updateHtmlRoot: root [
 ChatRTC >> start [
 
 	self initializeComponentHolder.
-	super start.
-
-	(document getElementById: #connect)
-		addEventListener: #click
-		do: [ self connectSignalingServer ].
-	(document getElementById: #connectRTC)
-		addEventListener: #click
-		do: [ self connectRTC ].
-
-	(document getElementById: #send)
-		addEventListener: #click
-		do: [ self sendMessage ]
+	super start
 ]

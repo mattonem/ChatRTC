@@ -46,12 +46,6 @@ RTCSignalingClientWidget >> addNewContact: anotherAddress [
 ]
 
 { #category : 'rendering' }
-RTCSignalingClientWidget >> close [
-
-	signalingClient close
-]
-
-{ #category : 'rendering' }
 RTCSignalingClientWidget >> download [
 
 	(window crypto subtle exportKey: 'jwk' keys: keys privateKey) then: [
@@ -74,37 +68,6 @@ RTCSignalingClientWidget >> download [
 
 { #category : 'rendering' }
 RTCSignalingClientWidget >> fromJson: jsonFile [
-	"// --- IMPORT PRIVATE KEY (As before) ---
-      const privateKey = await window.crypto.subtle.importKey(
-        ""jwk"",
-        fullJwk,
-        { name: ""RSA-OAEP"", hash: ""SHA-256"" },
-        true,
-        [""decrypt""] 
-      );
-
-      // --- REGENERATE PUBLIC KEY ---
-      // A public key is just the 'kty', 'n', and 'e' fields from the private key.
-      const publicJwk = {
-        kty: fullJwk.kty, // Key Type (RSA)
-        n:   fullJwk.n,   // Modulus
-        e:   fullJwk.e,   // Exponent
-        alg: fullJwk.alg, // Algorithm
-        ext: true         // Extractable
-      };
-
-      // Import this subset as the Public Key
-      const publicKey = await window.crypto.subtle.importKey(
-        ""jwk"",
-        publicJwk,
-        { name: ""RSA-OAEP"", hash: ""SHA-256"" },
-        true,
-        [""encrypt""] // Public keys are used for Encryption (or verification)
-      );
-
-      console.log(""Private Key restored:"", privateKey);
-      console.log(""Public Key regenerated:"", publicKey);
-      alert(""Both keys restored successfully!"");"
 
 	| fullJwk |
 	fullJwk := jsonFile keys privateKey.
@@ -134,21 +97,29 @@ RTCSignalingClientWidget >> renderHtmlOn: html [
 		with: [
 			html div
 				class: 'card-header';
-				with: [ html text: 'Chat client' ].
+				with: [
+					html div
+						class: 'd-flex';
+						with: [
+							html paragraph
+								class: 'flex-grow-1';
+								with: 'Chat client'.
+							html div
+								class: 'form-check form-switch';
+								with: [
+									html checkbox
+										checked: signalingClient isOpen;
+										class: 'form-check-input';
+										id: 'status' ] ] ].
 			html div
 				class: 'card-body';
 				with: [
 					html div with: [
-							html span
-								class: 'badge text-bg-secondary';
-								id: #status;
-								with: 'closed' ].
-					html div with: [
-						html label
-							class: 'form-label';
-							for: 'address';
-							with: 'Address'.
-						html textInput disabled id: #address ].
+							html label
+								class: 'form-label';
+								for: 'address';
+								with: 'Address'.
+							html textInput disabled id: #address ].
 					html div with: [
 						html textInput
 							class: 'form-label';
@@ -164,17 +135,7 @@ RTCSignalingClientWidget >> renderHtmlOn: html [
 								class: 'btn btn-primary';
 								id: #download;
 								with: 'Download' ].
-					html div id: #contacts.
-					html div with: [
-						html button
-							class: 'btn btn-primary';
-							id: #open;
-							with: 'Open'.
-						html button
-							class: 'btn btn-secondary';
-							hidden: true;
-							id: #close;
-							with: 'Close' ] ] ]
+					html div id: #contacts ] ]
 ]
 
 { #category : 'rendering' }
@@ -187,18 +148,27 @@ RTCSignalingClientWidget >> start [
 
 	super start.
 	signalingClient generateNewKeys.
+
+
 	(self getElementById: #download)
 		addEventListener: #click
 		block: [ self download ].
 	(self getElementById: #addContact)
 		addEventListener: #click
 		block: [ self addNewContact ].
-	(self getElementById: #open)
+	(self getElementById: #status)
 		addEventListener: #click
-		block: [ signalingClient open ].
-	(self getElementById: #close)
-		addEventListener: #click
-		block: [ self close ].
+		block: [ :e |
+			signalingClient isOpen
+				ifTrue: [ signalingClient close ]
+				ifFalse: [ signalingClient open ] ].
+
+	signalingClient announcer
+		when: SignalingAddressUpdated
+		do: [
+			signalingClient close.
+			signalingClient open ]
+		for: self.
 	signalingClient announcer
 		when: SignalingAddressUpdated
 		do: [ :e | (self getElementById: #address) value: e address ]
@@ -206,16 +176,7 @@ RTCSignalingClientWidget >> start [
 	signalingClient announcer
 		when: SignalingStatus
 		do: [ :event |
-			event status = #open ifTrue: [
-				(self getElementById: #status) className: 'badge text-bg-success' ].
-			(self getElementById: #open) hidden: true.
-			(self getElementById: #close) hidden: false.
-			event status = #closed ifTrue: [
-				(self getElementById: #status) className:
-					'badge text-bg-secondary'.
-				(self getElementById: #open) hidden: false.
-				(self getElementById: #close) hidden: true ].
-			(self getElementById: #status) innerText: event status ]
+			(self getElementById: #status) checked: signalingClient isOpen ]
 		for: self.
 	signalingClient announcer
 		when: SignalingNewContact

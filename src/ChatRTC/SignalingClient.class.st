@@ -19,9 +19,9 @@ SignalingClient >> announcer [
 ]
 
 { #category : 'as yet unclassified' }
-SignalingClient >> close [ 
+SignalingClient >> close [
 
-	self subclassResponsibility
+	self subclassResponsibility 
 ]
 
 { #category : 'as yet unclassified' }
@@ -39,19 +39,19 @@ SignalingClient >> initialize [
 
 { #category : 'as yet unclassified' }
 SignalingClient >> isClosed [
-		announcer announce: SignalingStatus closed
+	^ self isOpen not
 ]
 
 { #category : 'as yet unclassified' }
 SignalingClient >> isOpen [
 
-	announcer announce: SignalingStatus open
+	self subclassResponsibility 
 ]
 
 { #category : 'instance creation' }
 SignalingClient >> open [
 
-	self subclassResponsibility
+	self subclassResponsibility 
 ]
 
 { #category : 'as yet unclassified' }
