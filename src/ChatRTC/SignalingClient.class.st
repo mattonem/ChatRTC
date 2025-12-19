@@ -48,7 +48,7 @@ SignalingClient >> isOpen [
 	self subclassResponsibility 
 ]
 
-{ #category : 'instance creation' }
+{ #category : 'as yet unclassified' }
 SignalingClient >> open [
 
 	self subclassResponsibility 

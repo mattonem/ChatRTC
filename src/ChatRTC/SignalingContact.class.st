@@ -6,7 +6,8 @@ Class {
 		'pubRSAKey',
 		'originAddress',
 		'originRSAKey',
-		'address'
+		'address',
+		'open'
 	],
 	#category : 'ChatRTC',
 	#package : 'ChatRTC'
@@ -31,9 +32,30 @@ SignalingContact >> announcer [
 ]
 
 { #category : 'as yet unclassified' }
+SignalingContact >> close [
+
+	open := false.
+	announcer announce: (SignalingStatus new status: #close)
+]
+
+{ #category : 'as yet unclassified' }
 SignalingContact >> initialize [
 
-	announcer := Announcer new
+	announcer := Announcer new.
+	open := false.
+]
+
+{ #category : 'accessing' }
+SignalingContact >> isOpen [
+
+	^ open
+]
+
+{ #category : 'as yet unclassified' }
+SignalingContact >> open [
+
+	open := true.
+	announcer announce: (SignalingStatus new status: #open)
 ]
 
 { #category : 'accessing' }

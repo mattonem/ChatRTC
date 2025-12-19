@@ -23,12 +23,18 @@ RTCSignalingContactWidget >> addressToCall: anObject [
 { #category : 'accessing' }
 RTCSignalingContactWidget >> handleOffer: offer [
 
-	self
-		addComponent: (CChatConv new
-				 signalingContact: signalingContact;
-				 handleOffer: offer;
-				 yourself)
-		in: (self getElementById: #conversation)
+		self
+			addComponent: (CChatConv new
+					 signalingContact: signalingContact;
+					 handleOffer: offer;
+					 yourself)
+			in: (self getElementById: #conversation) 
+]
+
+{ #category : 'accessing' }
+RTCSignalingContactWidget >> initialize [
+
+	super initialize.
 ]
 
 { #category : 'accessing' }
@@ -50,7 +56,20 @@ RTCSignalingContactWidget >> renderHtmlOn: html [
 		with: [
 			html div
 				class: 'card-header';
-				with: [ html text: addressToCall ].
+				with: [
+					html div
+						class: 'd-flex';
+						with: [
+							html paragraph
+								class: 'flex-grow-1 text-truncate';
+								with: addressToCall.
+							html div
+								class: 'form-check form-switch';
+								with: [
+									html checkbox
+										checked: signalingContact isOpen;
+										class: 'form-check-input';
+										id: 'status' ] ] ].
 			html div
 				class: 'card-body';
 				with: [
@@ -105,9 +124,20 @@ RTCSignalingContactWidget >> start [
 		addEventListener: #click
 		block: [ self startChart ].
 
+	(self getElementById: #status) addEventListener: #click block: [
+		signalingContact isOpen
+			ifTrue: [ signalingContact close ]
+			ifFalse: [ signalingContact open ] ].
+
 	signalingContact announcer
 		when: SignalingOfferReceived
 		do: [ :offer | self handleOffer: offer offer ]
+		for: self.
+
+	signalingContact announcer
+		when: SignalingStatus
+		do: [ :event |
+			(self getElementById: #status) checked: signalingContact isOpen ]
 		for: self
 ]
 

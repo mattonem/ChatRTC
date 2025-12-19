@@ -86,9 +86,10 @@ PubNubSignalingContact >> handleCandidate: anCandidateMessage [
 { #category : 'as yet unclassified' }
 PubNubSignalingContact >> handleOffer: anOfferMessage [
 
-	announcer announce: (SignalingOfferReceived new
-			 offer: anOfferMessage;
-			 yourself)
+	open ifTrue: [
+		announcer announce: (SignalingOfferReceived new
+				 offer: anOfferMessage;
+				 yourself) ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -134,7 +135,8 @@ PubNubSignalingContact >> ping [
 { #category : 'accessing' }
 PubNubSignalingContact >> pubKey: anObject [
 
-	pubKey := anObject
+	pubKey := anObject.
+	self open.
 ]
 
 { #category : 'accessing' }
