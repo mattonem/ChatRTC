@@ -27,12 +27,14 @@ CChatConv >> addMessage: message fromUser: user [
 { #category : 'rendering' }
 CChatConv >> handleAnswer: answer [
 
+
 	connexion setRemoteDescription: answer
 ]
 
 { #category : 'rendering' }
 CChatConv >> handleCandidate: aCandidate [
-	(connexion at: #currentRemoteDescription) ifNotNil: [connexion addIceCandidate: aCandidate]
+
+	connexion addIceCandidate: aCandidate
 ]
 
 { #category : 'rendering' }
@@ -54,12 +56,10 @@ CChatConv >> handleOffer: anOffer [
 		(e at: #candidate) ifNotNil: [
 			self sendCandidate: (e at: #candidate) ] ].
 	connexion onconnectionstatechange: [ :ev |  ].
-
-	console log: anOffer.
 	connexion
 		setRemoteDescription: anOffer
 		do: [
-			console log: 'remote description set'.
+		
 
 			connexion
 				createAnswer: [ :description |
@@ -100,7 +100,7 @@ CChatConv >> renderHtmlOn: html [
 
 { #category : 'rendering' }
 CChatConv >> sendCandidate: aCandidate [
-	console log: aCandidate.
+
 	self signalSend: aCandidate
 ]
 
