@@ -66,7 +66,45 @@ RTCSignalingHubWidget >> renderHtmlOn: html [
 							html fileInput
 								hidden: true;
 								id: #uploadClient.
-							html div id: #clients ] ] ]
+							html div id: #clients.
+						
+							html button
+								class: 'btn btn-primary';
+								hidden: true;
+								attributeAt: 'data-toggle' put: 'modal';
+								attributeAt: 'data-target' put: '#clientCreationModal';
+								with: 'create new client'.
+							html div
+								class: 'modal fade';
+								id: 'clientCreationModal';
+								attributeAt: 'tabindex' put: '-1';
+								role: 'dialog';
+								with: [
+									html div
+										class: 'modal-dialog';
+										role: 'document';
+										with: [
+											html div
+												class: 'modal-content';
+												with: [
+													html div
+														class: 'modal-header';
+														with: [
+															html heading
+																level: 5;
+																class: 'modal-title';
+																with: 'Create new client'.
+															html button
+																attributeAt: 'type' put: 'button';
+																class: 'close';
+																attributeAt: 'data-dismiss' put: 'modal';
+																with: [ html span with: 'X' ] ] ].
+											html div
+												class: 'modal-body';
+												with: 'body'.
+											html div
+												class: 'modal-footer';
+												with: 'footer' ] ] ] ] ]
 ]
 
 { #category : 'rendering' }

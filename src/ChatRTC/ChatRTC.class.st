@@ -75,10 +75,11 @@ ChatRTC class >> updateHtmlRoot: root [
 	<pharoJsSkip>
 	root language: 'en'.
 	root stylesheet url:
-		'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'.
+		'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css'.
 	root stylesheet url:
 		'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css'.
-		
+	root script url:
+		'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.js'
 ]
 
 { #category : 'initialize-release' }

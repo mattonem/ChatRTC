@@ -42,8 +42,9 @@ ChatRTCWidget >> renderHtmlOn: html [
 						on: html.
 					html div
 						id: #startNewConversation;
+						hidden: true;
 						class: 'btn btn-pimary';
-						with: 'Start new conversation' ] ]
+						with: 'Start new conversation'. ] ]
 ]
 
 { #category : 'rendering' }
