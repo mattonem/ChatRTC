@@ -110,7 +110,7 @@ RTCSignalingHubWidget >> renderHtmlOn: html [
 																	id: #createLocalClient;
 																	attributeAt: 'data-bs-dismiss' put: 'modal';
 																	with: 'Create' ].
-															html break.
+															html horizontalRule.
 															html heading
 																level: 6;
 																with: 'Create PubNub Signaling Client'.
