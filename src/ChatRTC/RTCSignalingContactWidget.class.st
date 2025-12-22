@@ -84,10 +84,7 @@ RTCSignalingContactWidget >> renderHtmlOn: html [
 						id: 'localStatusSecured';
 						with: 'Local status secured' ].
 			html div with: [
-				html button
-					class: 'btn btn-primary';
-					id: #ping;
-					with: 'Ping'.
+				
 				html button
 					class: 'btn btn-primary';
 					id: #startChat;
@@ -112,9 +109,7 @@ RTCSignalingContactWidget >> start [
 
 	self initializeComponentHolder.
 	super start.
-	(self getElementById: #ping)
-		addEventListener: #click
-		block: [ self ping ].
+
 	signalingContact announcer
 		when: SignalingContactIsSecured
 		do: [

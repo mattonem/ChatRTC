@@ -63,7 +63,7 @@ RTCSignalingHubWidget >> renderHtmlOn: html [
 								hidden: true;
 								id: #uploadClient.
 							html div id: #clients.
-
+							html break.
 							html button
 								class: 'btn btn-primary';
 								attributeAt: 'data-bs-toggle' put: 'modal';

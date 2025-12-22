@@ -114,20 +114,32 @@ RTCSignalingClientWidget >> renderHtmlOn: html [
 			html div
 				class: 'card-body';
 				with: [
-					html div with: [
+					html div
+						class: 'form-group row';
+						with: [
 							html label
-								class: 'form-label';
+								class: 'col-sm-2 col-form-label';
 								for: 'address';
-								with: 'Address'.
-							html textInput disabled id: #address ].
-					html div with: [
-						html textInput
+								with: 'My address'.
+							html div
+								class: 'col-sm-10';
+								with: [
+									html textInput
+										class: 'form-control';
+										disabled;
+										id: #address ] ].
+					html div class: 'form-inline'; with: [
+						html label
 							class: 'form-label';
+							for: 'address';
+							with: 'Address to call'.
+						html textInput
+							class: 'form-control mb-2 mr-sm-2';
 							id: #addressToCall.
 						html button
-							class: 'btn btn-primary';
+							class: 'btn btn-primary mb-2';
 							id: #addContact;
-							with: 'Add contact' ].
+							with: 'Call' ].
 					html div
 						hidden: true;
 						with: [
