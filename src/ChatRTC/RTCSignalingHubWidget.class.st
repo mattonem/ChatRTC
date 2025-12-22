@@ -105,7 +105,7 @@ RTCSignalingHubWidget >> renderHtmlOn: html [
 																level: 6;
 																with: 'Create Local Signaling Client'.
 															html paragraph with:
-																'This signaling client will only work for reaching out to contacts that are in the current instance of the browser. It should be used for testing purposes -- or when used in parallel with other clients type, it allows to create a local client with the same interface as your remote clients does.'.
+																'This signaling client will only work for reaching out to contacts that are in the current instance of the browser. It should be used for testing purposes -- or when used in parallel with other client types, it allows to create a local client with the same interface as your remote clients do.'.
 															html div with: [
 																html button
 																	class: 'btn btn-primary';
