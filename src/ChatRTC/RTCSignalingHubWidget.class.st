@@ -68,7 +68,7 @@ RTCSignalingHubWidget >> renderHtmlOn: html [
 								class: 'btn btn-primary';
 								attributeAt: 'data-bs-toggle' put: 'modal';
 								attributeAt: 'data-bs-target' put: '#clientCreationModal';
-								with: 'create new client'.
+								with: 'Create new client'.
 							html div
 								class: 'modal fade';
 								id: 'clientCreationModal';
@@ -99,6 +99,8 @@ RTCSignalingHubWidget >> renderHtmlOn: html [
 													html div
 														class: 'modal-body';
 														with: [
+															html paragraph with:
+																	'A signaling server is used for negociating the terms of the peer to peer webRTC connexion. It is usually supports features such as discovery of other available clients and creation of secured channels for the negociation.'.
 															html heading
 																level: 6;
 																with: 'Create Local Signaling Client'.

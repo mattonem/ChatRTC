@@ -83,12 +83,13 @@ RTCSignalingContactWidget >> renderHtmlOn: html [
 						hidden: signalingContact pubRSAKey isNil;
 						id: 'localStatusSecured';
 						with: 'Local status secured' ].
-			html div with: [
-				
-				html button
-					class: 'btn btn-primary';
-					id: #startChat;
-					with: 'Start chatting' ].
+			html div
+				class: 'btn-group';
+				with: [
+					html button
+						class: 'btn btn-primary';
+						id: #startChat;
+						with: 'Start chatting' ].
 			html div id: #conversation ]
 ]
 
