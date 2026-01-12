@@ -4,7 +4,8 @@ Class {
 	#traits : 'StaticComponentHolder',
 	#classTraits : 'StaticComponentHolder classTrait',
 	#pools : [
-		'RTCGlobals'
+		'RTCGlobals',
+		'WebWorkerGlobals'
 	],
 	#classInstVars : [
 		'staticComponents'
@@ -79,12 +80,29 @@ ChatRTC class >> updateHtmlRoot: root [
 	root stylesheet url:
 		'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css'.
 	root script url:
-		'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.js'
+		'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.js'.
+		
+]
+
+{ #category : 'accessing' }
+ChatRTC class >> workers [
+
+	^ { WebWorker }
 ]
 
 { #category : 'initialize-release' }
 ChatRTC >> start [
 
+	| worker |
 	self initializeComponentHolder.
-	super start
+	super start.
+	worker := WebWorker createWorker: WebWorker.
+
+	worker postMessage: (SignalingAnswerReceived new
+			 answer: 'hi';
+			 yourself).
+	worker announcer
+		when: SignalingAnswerReceived
+		do: [ :aMessage | console log: aMessage ]
+		for: self
 ]
