@@ -87,22 +87,12 @@ ChatRTC class >> updateHtmlRoot: root [
 { #category : 'accessing' }
 ChatRTC class >> workers [
 
-	^ { WebWorker }
+	^ { ChatServer }
 ]
 
 { #category : 'initialize-release' }
 ChatRTC >> start [
 
-	| worker |
 	self initializeComponentHolder.
 	super start.
-	worker := WebWorker createWorker: WebWorker.
-
-	worker postMessage: (SignalingAnswerReceived new
-			 answer: 'hi';
-			 yourself).
-	worker announcer
-		when: SignalingAnswerReceived
-		do: [ :aMessage | console log: aMessage ]
-		for: self
 ]
