@@ -100,12 +100,12 @@ RTCSignalingHubWidget >> renderHtmlOn: html [
 														class: 'modal-body';
 														with: [
 															html paragraph with:
-																	'A signaling server is used for negociating the terms of the peer to peer webRTC connexion. It is usually supports features such as discovery of other available clients and creation of secured channels for the negociation.'.
+																'A signaling server is used for negotiating the terms of the peer-to-peer WebRTC connection. It typically supports features such as discovery of other available clients and creation of secure channels for negotiation.'.
 															html heading
 																level: 6;
 																with: 'Create Local Signaling Client'.
 															html paragraph with:
-																'This signaling client will only work for reaching out to contacts that are in the current instance of the browser. It should be used for testing purposes -- or when used in parallel with other client types, it allows to create a local client with the same interface as your remote clients do.'.
+																'This signaling client only works for reaching contacts in the current browser instance. It should be used for testing purposes or in parallel with other client types to create a local client with the same interface as your remote clients.'.
 															html div with: [
 																html button
 																	class: 'btn btn-primary';
@@ -122,8 +122,8 @@ RTCSignalingHubWidget >> renderHtmlOn: html [
 																	url: 'https://www.pubnub.com/';
 																	with: 'PubNub'.
 																html text:
-																	' as a Signaling server. The prefilled credentials are the one from my personal freetrial -- they might fail anytime due to popularity. You can create your own credentials on the plateform directly.' ].
-															html div with: [
+																	' as a signaling server. The prefilled credentials are from my personal free trial and may fail due to usage limits. You can create your own credentials on the platform directly.' ].
+html div with: [
 																html label
 																	class: 'form-label';
 																	for: 'pubnubSubKey';
