@@ -93,6 +93,10 @@ ChatRTC class >> workers [
 { #category : 'initialize-release' }
 ChatRTC >> start [
 
+	| worker job |
 	self initializeComponentHolder.
 	super start.
+	worker := WebJobWorker createWorker: ChatServer.
+	job := worker postMessage: 'message'.
+	job callbackBlock: [ :amessage | console log: amessage ]
 ]

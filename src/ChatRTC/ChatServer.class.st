@@ -1,6 +1,12 @@
 Class {
 	#name : 'ChatServer',
-	#superclass : 'WebWorker',
+	#superclass : 'WebJobWorker',
 	#category : 'ChatRTC',
 	#package : 'ChatRTC'
 }
+
+{ #category : 'start-stop' }
+ChatServer >> onMessage: anObject [
+
+	^ anObject, ' treated'
+]
