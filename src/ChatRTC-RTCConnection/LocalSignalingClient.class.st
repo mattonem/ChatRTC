@@ -12,8 +12,8 @@ Class {
 	#classInstVars : [
 		'announcer'
 	],
-	#category : 'ChatRTC',
-	#package : 'ChatRTC'
+	#category : 'ChatRTC-RTCConnection',
+	#package : 'ChatRTC-RTCConnection'
 }
 
 { #category : 'accessing' }

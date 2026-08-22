@@ -1,8 +1,8 @@
 Class {
 	#name : 'LocalSignalingContact',
 	#superclass : 'SignalingContact',
-	#category : 'ChatRTC',
-	#package : 'ChatRTC'
+	#category : 'ChatRTC-RTCConnection',
+	#package : 'ChatRTC-RTCConnection'
 }
 
 { #category : 'as yet unclassified' }

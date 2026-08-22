@@ -13,8 +13,8 @@ Class {
 		'PjUniversalGlobals',
 		'RTCGlobals'
 	],
-	#category : 'ChatRTC',
-	#package : 'ChatRTC'
+	#category : 'ChatRTC-RTCConnection',
+	#package : 'ChatRTC-RTCConnection'
 }
 
 { #category : 'as yet unclassified' }

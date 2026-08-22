@@ -4,8 +4,8 @@ Class {
 	#instVars : [
 		'message'
 	],
-	#category : 'ChatRTC',
-	#package : 'ChatRTC'
+	#category : 'ChatRTC-Core',
+	#package : 'ChatRTC-Core'
 }
 
 { #category : 'accessing' }

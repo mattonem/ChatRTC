@@ -5,8 +5,8 @@ Class {
 		'subKey',
 		'pubKey'
 	],
-	#category : 'ChatRTC',
-	#package : 'ChatRTC'
+	#category : 'ChatRTC-RTCConnection',
+	#package : 'ChatRTC-RTCConnection'
 }
 
 { #category : 'as yet unclassified' }

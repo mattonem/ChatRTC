@@ -17,7 +17,7 @@ BaselineOfChatRTC >> baseline: spec [
 			spec package: #ChatRTC with: [ spec requires: #( Camping ) ].
 			spec package: #'ChatRTC-DataChannel'.
 			spec package: #'ChatRTC-RTCConnection' with: [
-				spec requires: #( ChatRTC 'ChatRTC-DataChannel' ) ].
+				spec requires: #( ChatRTC 'ChatRTC-DataChannel' 'ChatRTC-Core') ].
 			spec package: #'ChatRTC-UI' with: [
-				spec requires: #( ChatRTC 'ChatRTC-RTCConnection' ) ] ]
+				spec requires: #( ChatRTC 'ChatRTC-RTCConnection' 'ChatRTC-Core') ] ]
 ]

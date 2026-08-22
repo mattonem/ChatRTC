@@ -4,8 +4,8 @@ Class {
 	#instVars : [
 		'status'
 	],
-	#category : 'ChatRTC',
-	#package : 'ChatRTC'
+	#category : 'ChatRTC-Core',
+	#package : 'ChatRTC-Core'
 }
 
 { #category : 'as yet unclassified' }

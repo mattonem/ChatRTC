@@ -1,6 +1,6 @@
 Class {
 	#name : 'SignalingContactIsSecured',
 	#superclass : 'Announcement',
-	#category : 'ChatRTC',
-	#package : 'ChatRTC'
+	#category : 'ChatRTC-Core',
+	#package : 'ChatRTC-Core'
 }
