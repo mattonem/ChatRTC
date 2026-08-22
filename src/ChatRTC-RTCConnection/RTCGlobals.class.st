@@ -12,6 +12,6 @@ Class {
 		'XMLHttpRequest',
 		'crypto'
 	],
-	#category : 'ChatRTC',
-	#package : 'ChatRTC'
+	#category : 'ChatRTC-RTCConnection',
+	#package : 'ChatRTC-RTCConnection'
 }
