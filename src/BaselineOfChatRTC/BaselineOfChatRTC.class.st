@@ -14,7 +14,10 @@ BaselineOfChatRTC >> baseline: spec [
 			baseline: 'Camping'
 			with: [ spec repository: 'github://mattonem/WildCamping' ].
 
-
-
-		spec package: #ChatRTC with: [ spec requires: #( Camping ) ] ]
+			spec package: #ChatRTC with: [ spec requires: #( Camping ) ].
+			spec package: #'ChatRTC-DataChannel'.
+			spec package: #'ChatRTC-RTCConnection' with: [
+				spec requires: #( ChatRTC 'ChatRTC-DataChannel' ) ].
+			spec package: #'ChatRTC-UI' with: [
+				spec requires: #( ChatRTC 'ChatRTC-RTCConnection' ) ] ]
 ]
