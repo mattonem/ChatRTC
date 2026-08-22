@@ -131,7 +131,7 @@ html div with: [
 																html textInput
 																	class: 'form-control';
 																	id: #pubnubSubKey;
-																	value: 'sub-c-c9966e74-3e54-4580-af77-af4f815a104c' ].
+																	value: 'sub-c-67d39918-e412-40e5-bbf7-5030511d7223' ].
 															html div with: [
 																html label
 																	class: 'form-label';
@@ -140,7 +140,7 @@ html div with: [
 																html textInput
 																	class: 'form-control';
 																	id: #pubnubPubKey;
-																	value: 'pub-c-570bf5e1-2662-46c9-812b-99d37b53c6bb' ].
+																	value: 'pub-c-6d403fbf-e1c5-450b-907c-85764ac17e83' ].
 															html div with: [
 																html button
 																	class: 'btn btn-primary';
