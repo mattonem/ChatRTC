@@ -8,6 +8,7 @@ Class {
 		'messageBlock'
 	],
 	#pools : [
+		'PjDomGlobals',
 		'RTCGlobals'
 	],
 	#category : 'ChatRTC-RTCConnection',
@@ -51,9 +52,15 @@ RTCConnection >> handleOffer: anOffer [
 	self createPeerConnection.
 	peerConnection
 		setRemoteDescription: anOffer
-		do: [ peerConnection createAnswer: [ :description |
-			peerConnection setLocalDescription: description
-				onSuccess: [ signalingContact send: description ] ] ]
+		do: [
+			peerConnection
+				createAnswer: [ :description |
+					peerConnection
+						setLocalDescription: description
+						onSuccess: [ signalingContact send: description ]
+						onFailure: [ :e | console log: e ] ]
+				onFailure: [ :e | console log: e ] ]
+		onfailure: [ :e | console log: e ]
 ]
 
 { #category : 'accessing' }
@@ -61,6 +68,12 @@ RTCConnection >> onMessage: aBlock [
 
 	messageBlock := aBlock.
 	dataChannel ifNotNil: [ dataChannel onMessage: messageBlock ]
+]
+
+{ #category : 'actions' }
+RTCConnection >> send: aMessage [
+
+	dataChannel send: aMessage
 ]
 
 { #category : 'signaling' }
@@ -78,21 +91,20 @@ RTCConnection >> signalingContact: aContact [
 	^ self
 ]
 
-{ #category : 'actions' }
-RTCConnection >> send: aMessage [
-
-	dataChannel send: aMessage
-]
-
 { #category : 'signaling' }
 RTCConnection >> startOffer [
 
 	self createPeerConnection.
 	self useDataChannel: (peerConnection createDataChannel: 'chat').
-	peerConnection createOffer: [ :description |
-		peerConnection setLocalDescription: description
-			onSuccess: [ description at: #appName put: #CChatConv.
-				signalingContact send: description ] ]
+	peerConnection
+		createOffer: [ :description |
+			peerConnection
+				setLocalDescription: description
+				onSuccess: [
+					description at: #appName put: #CChatConv.
+					signalingContact send: description ]
+				onFailure: [ console log: 'Failed to create offer' ] ]
+		ifFails: [ console log: 'Failed to create offer' ]
 ]
 
 { #category : 'private' }
